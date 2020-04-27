@@ -29,7 +29,7 @@ O resultado da requisição vai ser um JSON conforme o exemplo:
 	"decifrado": "aqui vai o texto decifrado",
 	"resumo_criptografico": "aqui vai o resumo"
 }
-## Not yet
+## Done
 O primeiro passo é você salvar o conteúdo do JSON em um arquivo com o nome answer.json, que irá usar no restante do desafio.
 ## Done
 Você deve usar o número de casas para decifrar o texto e atualizar o arquivo JSON, no campo decifrado. 
