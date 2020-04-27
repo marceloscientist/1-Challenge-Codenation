@@ -19,17 +19,21 @@ let answer = JSON.parse(file);
 
 const route = router.get('/', (req,res,next) => { 
     axios.get('https://api.codenation.dev/v1/challenge/dev-ps/generate-data?token=593785d09c700e4b270eb6572181eea4a8538cd2')
-  .then(function (response) {
-    answer = caeser.decrypt(response.data.cifrado, response.data.numero_casas);
-    file = JSON.stringify(answer)
-    fs.writeFile('answer.json', file, (err)=>{
+    .then(response => {
+      let data = response.data;
+      answer = JSON.stringify(data)
+    fs.writeFile('answer.json', answer, (err)=>{
         console.log('success')
     })
-    res.send('ok');
-  })
-  .catch(function (error) {
-       console.log(error);
-  })
+    })
+    .catch(error => {
+         console.log(error);
+    })
+  
+    
+    
+
+  res.send('ok');
 });
 
 app.use('/', route);
