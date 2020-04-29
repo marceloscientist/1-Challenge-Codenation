@@ -1,8 +1,6 @@
 'use strict'
-
 const express = require('express');
 const router = express.Router();
-
 
 const fs = require('fs');
 let file = fs.readFileSync('answer.json');
@@ -10,11 +8,10 @@ let answer = JSON.parse(file);
 const crypto = require('crypto');
 const caeser = require("../../public/js/caeser");
 
-
-const create = router.get('/create-answer', (req, res, next) => {
-
+router.get('/', (req, res, next) => {
+  let data = {}
   let { numero_casas, token, cifrado, decifrado, resumo_criptografico } = JSON.parse(file);
-  answer = {
+  data = {
     numero_casas,
     token,
     cifrado,
@@ -24,8 +21,11 @@ const create = router.get('/create-answer', (req, res, next) => {
         .update(JSON.stringify(decifrado))
         .digest('hex')
   }
-  res.json({ answer });
-
+  answer = JSON.stringify(data)
+  fs.writeFile('answer.json', answer, () => {
+    console.log('sucess');
+    res.json({ data });
+  })
 });
 
-module.exports = create
+module.exports = router
