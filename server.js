@@ -19,7 +19,7 @@ let answer = JSON.parse(file);
 let data = {}
 
 
-const route = router.get('/', (req,res,next) => { 
+const index = router.get('/', (req,res,next) => { 
     axios.get('https://api.codenation.dev/v1/challenge/dev-ps/generate-data?token=593785d09c700e4b270eb6572181eea4a8538cd2')
     .then(response => {
       data = response.data;
@@ -34,12 +34,46 @@ const route = router.get('/', (req,res,next) => {
     })
 });
 
+const create = router.get('/ff', (req,res,next) => { 
 
-app.use('/', route);
+    file = fs.readFileSync('answer.json');
+    let {numero_casas,token, cifrado, resumo_criptografico} = JSON.parse(file);
+    answer = {
+      numero_casas,
+      token,
+      cifrado,
+      decifrado: caeser.decrypt(cifrado,numero_casas),
+      resumo_criptografico
+    }
+    res.json({answer});
+    /*answer = JSON.stringify(data)
+    fs.writeFile('answer.json', answer, (err)=>{
+    console.log('success')
+    res.json({data});
+  })*/ 
+  
+});
+
+
+app.use('/', index);
+app.use('/', create);
+
 
 server.listen(port); 
 console.log('API rodando na porta ' + port);
 
+
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+  if (isNaN(port)) {
+    return val;
+  }
+  if (port >= 0) {
+    return port;
+  }
+  return false;
+
+}
 
 
 // https://www.youtube.com/watch?v=6iZiqQZBQJY
