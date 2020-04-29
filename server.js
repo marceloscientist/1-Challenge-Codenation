@@ -4,7 +4,11 @@ const http = require('http');
 const debug = require('debug')('nodestr:server');
 const express = require('express');
 const axios = require('axios').default;
-const caeser= require("./public/js/caeser");
+const caeser = require("./public/js/caeser");
+const crypto = require('crypto');
+
+
+
 
 const app = express();
 const port = normalizePort(process.env.PORT || '3000');
@@ -12,54 +16,56 @@ app.set('port', port);
 
 const server = http.createServer(app);
 const router = express.Router();
+const index = require('./src/routes/index')
 
+app.use('/',index)
 const fs = require('fs');
 let file = fs.readFileSync('answer.json');
 let answer = JSON.parse(file);
 let data = {}
 
 
-const index = router.get('/', (req,res,next) => { 
-    axios.get('https://api.codenation.dev/v1/challenge/dev-ps/generate-data?token=593785d09c700e4b270eb6572181eea4a8538cd2')
-    .then(response => {
-      data = response.data;
-      answer = JSON.stringify(data)
-      fs.writeFile('answer.json', answer, (err)=>{
-      console.log('success')
-      res.json({data});
-    })
-    })
-    .catch(error => {
-         console.log(error);
-    })
+
+const create = router.get('/create-answer', (req, res, next) => {
+
+  file = fs.readFileSync('answer.json');
+  let { numero_casas, token, cifrado, decifrado, resumo_criptografico } = JSON.parse(file);
+  answer = {
+    numero_casas,
+    token,
+    cifrado,
+    decifrado: caeser.decrypt(cifrado, numero_casas),
+    resumo_criptografico:
+      crypto.createHash('sha1')
+        .update(JSON.stringify(decifrado))
+        .digest('hex')
+  }
+  res.json({ answer });
+
 });
-
-const create = router.get('/ff', (req,res,next) => { 
-
-    file = fs.readFileSync('answer.json');
-    let {numero_casas,token, cifrado, resumo_criptografico} = JSON.parse(file);
-    answer = {
-      numero_casas,
-      token,
-      cifrado,
-      decifrado: caeser.decrypt(cifrado,numero_casas),
-      resumo_criptografico
-    }
-    res.json({answer});
-    /*answer = JSON.stringify(data)
-    fs.writeFile('answer.json', answer, (err)=>{
-    console.log('success')
-    res.json({data});
-  })*/ 
+  /*
   
-});
+  const secret = 'abcdefg';
+const hash = crypto.createHmac('sha256', secret)
+                 .update('I love cupcakes')
+                 .digest('hex');
+console.log(hash);
+  
+  
+  answer = JSON.stringify(data)
+  fs.writeFile('answer.json', answer, (err)=>{
+  console.log('success')
+  res.json({data});
+})*/
+
+
 
 
 app.use('/', index);
 app.use('/', create);
 
 
-server.listen(port); 
+server.listen(port);
 console.log('API rodando na porta ' + port);
 
 
