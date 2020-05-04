@@ -1,7 +1,6 @@
 'use strict'
 const express = require('express');
 const router = express.Router();
-
 const fs = require('fs');
 let file = fs.readFileSync('answer.json');
 let answer = JSON.parse(file);
@@ -24,8 +23,26 @@ router.get('/', (req, res, next) => {
   answer = JSON.stringify(data)
   fs.writeFile('answer.json', answer, () => {
     console.log('sucess');
-    res.json({ data });
+    /* res.json({ data }); */
   })
+  async function run() {   
+    const formData = new FormData();
+    formData.append('answer.json', fs.createReadStream(answer));
+    let { token } = JSON.parse(file);
+    const { answer } = await axios.post('https://api.codenation.dev/v1/challenge/dev-ps/submit-solution', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      params: {
+        token,
+      },
+      body: {
+        answer
+      }
+    });
+  }
+  res.json({ answer });
 });
+
 
 module.exports = router

@@ -37,23 +37,3 @@ function normalizePort(val) {
 // https://www.youtube.com/watch?v=egV9KattCvY&list=PLHlHvK2lnJndvvycjBqQAbgEDqXxKLoqn&index=5
 
 
-
-
-/*
-const create = router.get('/create-answer', (req, res, next) => {
-  file = fs.readFileSync('answer.json');
-  let { numero_casas, token, cifrado, decifrado, resumo_criptografico } = JSON.parse(file);
-  answer = {
-    numero_casas,
-    token,
-    cifrado,
-    decifrado: caeser.decrypt(cifrado, numero_casas),
-    resumo_criptografico:
-      crypto.createHash('sha1')
-        .update(JSON.stringify(decifrado))
-        .digest('hex')
-  }
-  res.json({ answer });
-});
-*/
-
